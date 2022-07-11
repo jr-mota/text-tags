@@ -51,7 +51,7 @@
 
     created() {
       window.addEventListener("load", () => {
-        this.saveAllTagAndCircleHref();
+        this.saveAllTagAndCircleWidth();
         this.handleAdaptiveTags();
       });
 
@@ -73,7 +73,7 @@
           this.tagsWithCircles.push({ ...this.tags[i], hidden: false });
         }
       },
-      saveAllTagAndCircleHref() {
+      saveAllTagAndCircleWidth() {
         for (const refElemKey in this.$refs) {
           const elem = this.$refs[refElemKey][0].$el;
 
