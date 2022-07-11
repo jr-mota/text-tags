@@ -5,7 +5,8 @@
   >
     <template v-for="(item, idx) of tagsWithCircles">
       <v-icon
-        v-if="item.circle && !item.hidden"
+        v-if="item.circle"
+        v-show="!item.hidden"
         :key="idx"
         :ref="'circle-' + idx"
       >
@@ -13,7 +14,8 @@
       </v-icon>
 
       <text-tag
-        v-else-if="!item.hidden"
+        v-else
+        v-show="!item.hidden"
         :key="idx"
         :icon="item.icon"
         :text="item.text"
@@ -48,18 +50,20 @@
     }),
 
     created() {
-      this.fillTagsAndCirclesToArr();
+      window.addEventListener("load", () => {
+        this.saveAllTagAndCircleHref();
+        this.handleAdaptiveTags();
+      });
+
+      this.fillTagsAndCircles();
     },
 
     mounted() {
-      this.saveAllTagAndCircleWidth();
-      this.handleAdaptiveTags();
-
       window.addEventListener("resize", this.handleAdaptiveTags);
     },
 
     methods: {
-      fillTagsAndCirclesToArr() {
+      fillTagsAndCircles() {
         for (let i = 0; i < this.tags.length; ++i) {
           const isFirstElem = i === 0;
 
@@ -69,17 +73,11 @@
           this.tagsWithCircles.push({ ...this.tags[i], hidden: false });
         }
       },
-      saveAllTagAndCircleWidth() {
+      saveAllTagAndCircleHref() {
         for (const refElemKey in this.$refs) {
           const elem = this.$refs[refElemKey][0].$el;
 
-          const elemStyles = getComputedStyle(elem);
-
-          this.allTagAndCircleWidth.push(
-            parseInt(elemStyles["width"]) +
-              parseInt(elemStyles["margin-left"]) +
-              parseInt(elemStyles["margin-right"])
-          );
+          this.allTagAndCircleWidth.push(elem.clientWidth);
         }
       },
       handleAdaptiveTags() {
@@ -93,7 +91,6 @@
 
         for (let i = 0; i < this.tagsWithCircles.length; i += 2) {
           const isFirstElem = i === 0;
-
           const tagWidth = this.allTagAndCircleWidth[i];
           const circleWidth = this.allTagAndCircleWidth[i - 1] || 0;
 
