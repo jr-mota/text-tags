@@ -1,22 +1,23 @@
 <template>
   <div
     class="text-tag-list"
-    :class="{ 'text-tag-list_by-width': alignment === 'by width' }"
+    :class="{ 'text-tag-list_by-width': alignmentByWidth }"
   >
     <template v-for="(item, idx) of tagsWithCircles">
       <v-icon
         v-if="item.circle && !item.hidden"
-        :ref="'circle-' + idx"
         :key="idx"
+        :ref="'circle-' + idx"
       >
         mdi-circle-small
       </v-icon>
+
       <text-tag
         v-else-if="!item.hidden"
-        :ref="'tag-' + idx"
         :key="idx"
         :icon="item.icon"
         :text="item.text"
+        :ref="'tag-' + idx"
       />
     </template>
   </div>
@@ -52,50 +53,47 @@
 
     mounted() {
       this.saveAllTagAndCircleWidth();
-      this.handleAdaptiveOfTags();
+      this.handleAdaptiveTags();
 
-      window.addEventListener("resize", this.handleAdaptiveOfTags);
+      window.addEventListener("resize", this.handleAdaptiveTags);
     },
 
     methods: {
       fillTagsAndCirclesToArr() {
         for (let i = 0; i < this.tags.length; ++i) {
-          if (i > 0) this.tagsWithCircles.push({ circle: true, hidden: false });
+          const isFirstElem = i === 0;
+
+          if (!isFirstElem)
+            this.tagsWithCircles.push({ circle: true, hidden: false });
 
           this.tagsWithCircles.push({ ...this.tags[i], hidden: false });
         }
       },
       saveAllTagAndCircleWidth() {
-        for (const elemKey in this.$refs) {
-          this.allTagAndCircleWidth.push(
-            this.$refs[elemKey][0].$el.clientWidth
-          );
+        for (const refElemKey in this.$refs) {
+          const elem = this.$refs[refElemKey][0].$el;
+
+          this.allTagAndCircleWidth.push(elem.clientWidth);
         }
       },
-      handleAdaptiveOfTags() {
-        const wrapperElem = this.$el.parentNode;
-        const wrapperElemStyles = window.getComputedStyle(wrapperElem);
-
+      handleAdaptiveTags() {
+        const wrapperElemStyles = window.getComputedStyle(this.$el.parentNode);
         const wrapperElemWidth =
           parseInt(wrapperElemStyles["width"]) -
           parseInt(wrapperElemStyles["padding-left"]) -
           parseInt(wrapperElemStyles["padding-right"]);
 
-        let widthOfElems = 0;
+        let widthOfTagsAndCircles = 0;
 
         for (let i = 0; i < this.tagsWithCircles.length; i += 2) {
           const isFirstElem = i === 0;
 
           const tagWidth = this.allTagAndCircleWidth[i];
-          let circleWidth = this.allTagAndCircleWidth[i - 1];
+          const circleWidth = this.allTagAndCircleWidth[i - 1] || 0;
 
-          if (isFirstElem) {
-            circleWidth = 0;
-          }
+          widthOfTagsAndCircles += tagWidth + circleWidth;
 
-          widthOfElems += tagWidth + circleWidth;
-
-          if (widthOfElems > wrapperElemWidth) {
+          if (widthOfTagsAndCircles >= wrapperElemWidth) {
             this.tagsWithCircles[i].hidden = true;
 
             if (!isFirstElem) this.tagsWithCircles[i - 1].hidden = true;
@@ -108,8 +106,14 @@
       },
     },
 
+    computed: {
+      alignmentByWidth() {
+        return this.alignment === "by width";
+      },
+    },
+
     beforeDestroy() {
-      window.removeEventListener("resize", this.handleAdaptiveOfTags);
+      window.removeEventListener("resize", this.handleAdaptiveTags);
     },
   };
 </script>
@@ -119,7 +123,7 @@
     width: 100%;
 
     display: flex;
-    justify-content: flex-start;
+    justify-content: flex-start; // default left alignment
 
     white-space: nowrap;
 

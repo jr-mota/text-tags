@@ -8,7 +8,7 @@
 </template>
 
 <script>
-  import TextTagList from "./components/TextTagList.vue";
+  import TextTagList from "./TextTagList.vue";
 
   export default {
     components: { TextTagList },
@@ -25,7 +25,7 @@
     },
 
     data: () => ({
-      tagsAlignment: "left",
+      tagsAlignment: "left", // or "by width"
     }),
   };
 </script>
