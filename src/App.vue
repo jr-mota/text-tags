@@ -2,33 +2,38 @@
   <v-app>
     <v-main>
       <v-container>
-        <v-card v-for="(obj, idx) of objects" :key="idx" class="mt-5">
-          <v-card-title>{{ obj.name }}</v-card-title>
-          <v-card-text>
-            <text-tag-list :tags="obj.tags" :alignment="'left'" />
-          </v-card-text>
-        </v-card>
+        <attraction-item
+          v-for="(attraction, idx) of attractions"
+          :name="attraction.name"
+          :tags="attraction.tags"
+          :key="idx"
+          class="mt-5"
+        />
       </v-container>
     </v-main>
   </v-app>
 </template>
 
 <script>
-  import TextTagList from "./components/TextTagList.vue";
+  import AttractionItem from "@/components/AttractionItem.vue";
 
   export default {
     name: "App",
 
-    components: { TextTagList },
+    components: {
+      AttractionItem,
+    },
 
     data: () => ({
-      objects: [
+      attractions: [
         {
           name: "Достопримечательность 1",
           tags: [
             { icon: "star", text: "4,3" },
             { icon: "", text: "Китайская стена" },
             { icon: "", text: "10,3 км" },
+            { icon: "clock", text: "6 часов" },
+            { icon: "airplane", text: "Самолет" },
           ],
         },
         {
