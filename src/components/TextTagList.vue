@@ -73,7 +73,13 @@
         for (const refElemKey in this.$refs) {
           const elem = this.$refs[refElemKey][0].$el;
 
-          this.allTagAndCircleWidth.push(elem.clientWidth);
+          const elemStyles = getComputedStyle(elem);
+
+          this.allTagAndCircleWidth.push(
+            parseInt(elemStyles["width"]) +
+              parseInt(elemStyles["margin-left"]) +
+              parseInt(elemStyles["margin-right"])
+          );
         }
       },
       handleAdaptiveTags() {
