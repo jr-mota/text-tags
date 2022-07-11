@@ -93,7 +93,10 @@
 
           widthOfTagsAndCircles += tagWidth + circleWidth;
 
+          console.log(widthOfTagsAndCircles, wrapperElemWidth);
+
           if (widthOfTagsAndCircles >= wrapperElemWidth) {
+            console.log(1);
             this.tagsWithCircles[i].hidden = true;
 
             if (!isFirstElem) this.tagsWithCircles[i - 1].hidden = true;
